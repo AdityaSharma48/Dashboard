@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+            integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Time Table</title>
+    </head>
+    
+    <body>
+        <div class="timetable">
+            <div class="nav">
+                <div class="icon1" style="background-color:black">
+                    <i class="fa-solid fa-arrow-left"
+                        style="background-color:black; outline:none; border:none;"></i>
+                </div>
+                <div class="text1"
+                    style="background-color: black;">Time-Table</div>
+            </div>
+
+            <div class="Day">
+                <button class="Sec" data-day="Monday">Monday</button>
+                <button class="Sec" data-day="Tuesday">Tuesday</button>
+                <button class="Sec" data-day="Wednesday">Wednesday</button>
+                <button class="Sec" data-day="Thursday">Thursday</button>
+                <button class="Sec" data-day="Friday">Friday</button>
+            </div>
+
+            <div class="insert">
+                <div class="timetable-container" id="Monday"></div>
+                <div class="timetable-container" id="Tuesday"></div>
+                <div class="timetable-container" id="Wednesday"></div>
+                <div class="timetable-container" id="Thursday"></div>
+                <div class="timetable-container" id="Friday"></div>
+            </div>
+        </div>
+
+        <script>
+    const timetableData = {
+        Monday: [
+            { time: "09-10 AM", subject: "C: PEA305 / R", room: "33-603 / S:K23BR" },
+            { time: "10-11 AM", subject: "C: INT428 / R", room: "33-603 / S:K23BR" },
+            { time: "11-12 AM", subject: "C: CSE316 / R", room: "33-603 / S:K23BR" },
+            { time: "01-02 PM", subject: "C: INT220 / R", room: "33-603 / S:K23BR" },
+            { time: "02-03 PM", subject: "C: INT220 / R", room: "33-603 / S:K23BR" },
+            { time: "03-04 PM", subject: "C: CSE310 / R", room: "33-603 / S:K23BR" },
+            { time: "04-05 PM", subject: "C: CSE310 / R", room: "33-603 / S:K23BR" },
+        ],
+        Tuesday: [
+            { time: "09-10 AM", subject: "C: PEA305 / R", room: "33-603 / S:K23BR" },
+            { time: "10-11 AM", subject: "C: INT428 / R", room: "33-603 / S:K23BR" },
+            { time: "11-12 AM", subject: "C: INT219 / R", room: "33-603 / S:K23BR" },
+            { time: "12-01 PM", subject: "C: INT219 / R", room: "33-603 / S:K23BR" },
+            { time: "01-02 PM", subject: "C: CSE310 / R", room: "33-603 / S:K23BR" },
+            { time: "03-04 PM", subject: "C: CSE325 / R", room: "33-603 / S:K23BR" },
+            { time: "04-05 PM", subject: "C: CSE325 / R", room: "33-603 / S:K23BR" },
+        ],
+        Wednesday: [
+            { time: "09-10 AM", subject: "C: CSE310 / R", room: "33-603 / S:K23BR" },
+            { time: "10-11 AM", subject: "C: CSE310 / R", room: "33-603 / S:K23BR" },
+            { time: "11-12 AM", subject: "C: PEA305 / R", room: "33-603 / S:K23BR" },
+            { time: "12-01 PM", subject: "C: CSE316 / R", room: "33-603 / S:K23BR" },
+            { time: "01-02 PM", subject: "C: CSE428 / R", room: "33-603 / S:K23BR" },
+            { time: "03-04 PM", subject: "C: CSE316 / R", room: "33-603 / S:K23BR" },
+        ],
+        Thursday: [
+            { time: "01-02 PM", subject: "C: CSE406 / R", room: "33-603 / S:K23BR" },
+            { time: "02-03 PM", subject: "C: INT220 / R", room: "33-603 / S:K23BR" },
+            { time: "03-04 PM", subject: "C: INT220 / R", room: "33-603 / S:K23BR" },
+            { time: "04-05 PM", subject: "C: CSE316 / R", room: "33-603 / S:K23BR" },
+        ],
+        Friday: [
+            { time: "01-02 PM", subject: "C: CSE406 / R", room: "33-603 / S:K23BR" },
+            { time: "02-03 PM", subject: "C: INT219 / R", room: "33-603 / S:K23BR" },
+            { time: "03-04 PM", subject: "C: INT219 / R", room: "33-603 / S:K23BR" },
+            { time: "04-05 PM", subject: "C: INT428 / R", room: "33-603 / S:K23BR" },
+        ]
+    };
+
+    function preloadTimetable() {
+        for (let day in timetableData) {
+            let container = document.getElementById(day);
+            let data = timetableData[day];
+
+            data.forEach((entry) => {
+                let card = document.createElement("div");
+                card.classList.add("card");
+                card.innerHTML = `
+                    <div class="time">${entry.time}</div>
+                    <div class="info">
+                        <p>${entry.subject}</p>
+                        <p>${entry.room}</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        document.getElementById("Monday").classList.add("active");
+    }
+
+    function switchTimetable(day) {
+        document.querySelectorAll(".timetable-container").forEach(div => div.classList.remove("active"));
+        document.getElementById(day).classList.add("active");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".Sec").forEach(button => {
+            button.addEventListener("click", () => {
+                let day = button.getAttribute("data-day");
+                switchTimetable(day);
+            });
+        });
+
+        preloadTimetable();
+    });
+
+    // Icon ----------------
+    let sec = document.querySelector(".icon1").firstElementChild;
+    sec.addEventListener("click", () => {
+        let a = document.querySelector(".timetable");
+        a.style.left = "-25%";
+    });
+</script>
+    </body>
+</html>
