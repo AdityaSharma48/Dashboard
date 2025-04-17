@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Courses</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-blue-50 text-gray-800">
+  <div class="max-w-7xl mx-auto px-4 py-12">
+    <header class="text-center mb-16">
+      <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 mb-3">Discover Top Courses</h1>
+      <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full mb-4"></div>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">Explore a wide variety of in-demand courses and supercharge your learning journey</p>
+    </header>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" id="coursesContainer">
+    </div>
+  </div>
+
+  <div id="enrollModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white p-8 rounded-lg w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-4 text-center">Enroll in <span id="courseName" class="text-blue-600"></span></h2>
+      <form id="enrollForm" class="space-y-4">
+        <input type="text" id="name" name="name" required placeholder="Your Name" class="w-full p-2 border rounded">
+        <input type="email" id="email" name="email" required placeholder="Your Email" class="w-full p-2 border rounded">
+        <div class="flex justify-between">
+          <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const courses = [
+      { code: "INT 219", desc: "Level up your frontend with HTML, CSS, Tailwind, and JavaScript.", icon: "https://cdn-icons-png.flaticon.com/512/190/190411.png" },
+      { code: "INT 220", desc: "Master the server-side with PHP SQL,APIs, and Spring Boot.", icon: "https://cdn-icons-png.flaticon.com/512/2721/2721224.png" },
+      { code: "CSE 310", desc: "Enhance your problem-solving skills with Java", icon: "https://cdn-icons-png.flaticon.com/512/843/843278.png" },
+      { code: "CSE 316", desc: "Build strong OS fundamentals with Process Sync, File Systems.", icon: "https://cdn-icons-png.flaticon.com/512/1828/1828884.png" },
+      { code: "INT 408", desc: "Level up with real-world problem solving using advanced algorithms.", icon: "https://cdn-icons-png.flaticon.com/512/1681/1681125.png" },
+      { code: "INT 428", desc: "Enhance your skills with Machine Learning, Neural Networks, and AI logic.", icon: "https://cdn-icons-png.flaticon.com/512/1907/1907555.png" },
+      { code: "PEA 305", desc: "Break down complex problems, identify patterns, and find smart solutions.", icon: "https://cdn-icons-png.flaticon.com/512/1055/1055687.png" },
+      { code: "CSE 325", desc: "Practical OS skills through process management and synchronization experiments.", icon: "https://cdn-icons-png.flaticon.com/512/1625/1625088.png" }
+    ];
+
+    const container = document.getElementById("coursesContainer");
+    courses.forEach(course => {
+      const card = document.createElement("div");
+      card.className = "bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition";
+      card.innerHTML = `
+        <img src="${course.icon}" class="w-16 h-16 mx-auto mb-4" alt="Icon">
+        <h2 class="text-xl font-semibold text-blue-700 mb-2 text-center">${course.code}</h2>
+        <p class="text-sm text-gray-600 mb-4 text-center">${course.desc}</p>
+        <p class="text-sm text-gray-600 mb-4 text-center">Instructor Ansh</p>
+        <div class="flex justify-center">
+          <button class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 enroll-btn" data-course="${course.code}">Enroll</button>
+        </div>`;
+      container.appendChild(card);
+    });
+
+    const modal = document.getElementById("enrollModal");
+    const courseNameSpan = document.getElementById("courseName");
+    let currentButton = null;
+
+    document.querySelectorAll(".enroll-btn").forEach(button => {
+      button.addEventListener("click", () => {
+        courseNameSpan.textContent = button.dataset.course;
+        modal.classList.remove("hidden");
+        currentButton = button;
+      });
+    });
+
+    function closeModal() {
+      modal.classList.add("hidden");
+      document.getElementById("enrollForm").reset();
+    }
+
+    document.getElementById("enrollForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const course = courseNameSpan.textContent;
+
+      fetch("submit.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&course=${encodeURIComponent(course)}`
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "success") {
+          currentButton.innerHTML = "⏳ Enrolling...";
+          closeModal();
+          setTimeout(() => {
+            currentButton.innerHTML = "✅ Enrolled";
+            currentButton.disabled = true;
+            currentButton.classList.remove("bg-blue-600", "hover:bg-blue-700");
+            currentButton.classList.add("bg-green-600");
+          }, 1500);
+        } else {
+          alert("Enrollment failed: " + data.message);
+        }
+      })
+      .catch(error => {
+        alert("Something went wrong: " + error);
+      });
+    });
+  </script>
+</body>
+</html>
